@@ -118,7 +118,7 @@ input { font-family: inherit; color: inherit; }
 .hero {
   position: relative;
   z-index: 2;
-  padding: clamp(40px, 8vh, 80px) 0 60px;
+  padding: clamp(16px, 3vh, 36px) 0 48px;
   max-width: 880px;
   margin: 0 auto;
   text-align: center;
@@ -133,7 +133,7 @@ input { font-family: inherit; color: inherit; }
   letter-spacing: 0.24em;
   text-transform: uppercase;
   color: var(--ink-dim);
-  margin-bottom: 36px;
+  margin-bottom: 22px;
   animation: rise 0.9s ease-out 0.15s backwards;
 }
 
@@ -146,10 +146,10 @@ input { font-family: inherit; color: inherit; }
 .hero__title {
   font-family: var(--serif);
   font-weight: 400;
-  font-size: clamp(64px, 12vw, 148px);
+  font-size: clamp(56px, 10vw, 124px);
   line-height: 0.95;
   letter-spacing: -0.025em;
-  margin: 0 0 28px;
+  margin: 0 0 20px;
   color: var(--ink);
 }
 
@@ -172,16 +172,163 @@ input { font-family: inherit; color: inherit; }
 
 .hero__tagline {
   font-family: var(--serif);
-  font-size: clamp(17px, 1.6vw, 21px);
-  line-height: 1.55;
-  max-width: 540px;
-  margin: 0 auto 48px;
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.5;
+  max-width: 520px;
+  margin: 0 auto 32px;
   color: var(--ink-dim);
   animation: rise 1.1s ease-out 0.55s backwards;
 }
 
 .br-lg { display: none; }
 @media (min-width: 720px) { .br-lg { display: inline; } }
+
+/* ---------- Countdown (flip calendar) ---------- */
+.countdown {
+  margin: 0 auto 40px;
+  max-width: 640px;
+  animation: rise 1.1s ease-out 0.62s backwards;
+}
+
+.countdown__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 18px;
+}
+
+.countdown__pulse {
+  width: 6px;
+  height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(184, 212, 74, 0.8);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+
+.countdown__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  justify-items: center;
+}
+
+.flip-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.flip {
+  position: relative;
+  width: clamp(60px, 11vw, 96px);
+  height: clamp(82px, 15vw, 132px);
+  perspective: 600px;
+}
+
+.flip__half,
+.flip__flap {
+  position: absolute;
+  left: 0; right: 0;
+  height: 50%;
+  overflow: hidden;
+  background: var(--bg-elev);
+  border: 1px solid var(--line-strong);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.15);
+}
+
+.flip__half--top, .flip__flap--top {
+  top: 0;
+  border-radius: 6px 6px 0 0;
+  border-bottom: 1px solid var(--bg);
+  background-image: linear-gradient(180deg, rgba(255,255,255,0.025), transparent);
+}
+
+.flip__half--bottom, .flip__flap--bottom {
+  bottom: 0;
+  border-radius: 0 0 6px 6px;
+  border-top: 1px solid var(--bg);
+  background-image: linear-gradient(180deg, transparent, rgba(0,0,0,0.18));
+}
+
+.flip__digit {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  text-align: center;
+  font-family: var(--mono);
+  font-weight: 500;
+  font-size: clamp(40px, 7.5vw, 64px);
+  line-height: clamp(82px, 15vw, 132px);
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.flip__half--top .flip__digit,
+.flip__flap--top .flip__digit { top: 0; }
+
+.flip__half--bottom .flip__digit,
+.flip__flap--bottom .flip__digit { bottom: 0; }
+
+.flip__flap--top {
+  transform-origin: center bottom;
+  z-index: 2;
+  animation: flipTopDown 0.3s ease-in forwards;
+  backface-visibility: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.15),
+    0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.flip__flap--bottom {
+  transform-origin: center top;
+  z-index: 2;
+  transform: rotateX(90deg);
+  animation: flipBottomUp 0.3s ease-out 0.3s forwards;
+  backface-visibility: hidden;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.15),
+    0 -4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.flip-unit__label {
+  font-family: var(--mono);
+  font-size: 9px;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.countdown__live {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: clamp(28px, 3.5vw, 40px);
+  color: var(--accent);
+  margin: 0;
+  padding: 24px 0;
+}
+
+@media (max-width: 520px) {
+  .countdown__grid { gap: 8px; }
+  .flip-unit__label { font-size: 8px; letter-spacing: 0.18em; }
+}
+
+@keyframes flipTopDown {
+  0%   { transform: rotateX(0); }
+  100% { transform: rotateX(-90deg); }
+}
+
+@keyframes flipBottomUp {
+  0%   { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
 
 /* ---------- Signup ---------- */
 .signup {
@@ -543,6 +690,79 @@ input { font-family: inherit; color: inherit; }
   .hero__foot-col--right { align-items: center; text-align: center; }
   .footer { grid-template-columns: 1fr; gap: 14px; text-align: center; padding-bottom: 4px; }
   .footer__col, .footer__col--center, .footer__col--right { justify-self: center; }
+}
+
+@media (max-width: 600px) {
+  .page { padding: 20px 16px; }
+
+  .nav { font-size: 10px; padding-bottom: 18px; letter-spacing: 0.06em; }
+  .brand__logo { height: 28px; }
+  .nav__status { gap: 8px; }
+
+  .hero { padding: 12px 0 40px; }
+  .hero__eyebrow {
+    font-size: 9px;
+    letter-spacing: 0.18em;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .hero__rule { width: 20px; }
+  .hero__title { margin-bottom: 16px; }
+  .hero__tagline {
+    font-size: 15px;
+    line-height: 1.5;
+    margin-bottom: 28px;
+  }
+
+  .countdown { margin-bottom: 32px; }
+  .countdown__label {
+    font-size: 9px;
+    letter-spacing: 0.2em;
+    margin-bottom: 14px;
+  }
+  .countdown__grid { gap: 8px; }
+
+  .signup { margin-bottom: 48px; }
+  .signup__row { padding-left: 18px; }
+  .signup__btn { padding: 0 16px; font-size: 11px; }
+
+  .seal { width: 100px; height: 100px; margin-bottom: 48px; }
+
+  .marquee {
+    margin: 56px -16px 0;
+    padding: 18px 0;
+  }
+  .marquee__track { gap: 36px; }
+  .marquee__item { gap: 36px; }
+
+  .trio { padding: 64px 0 56px; }
+  .trio__heading { margin-bottom: 40px; }
+  .pillar__title { font-size: 32px; }
+  .pillar__head { margin-bottom: 16px; }
+
+  .still { padding: 56px 0 40px; }
+  .still__kicker { margin-bottom: 18px; }
+
+  .footer { padding: 24px 0 10px; font-size: 10px; }
+  .footer__logo { height: 18px; }
+}
+
+@media (max-width: 380px) {
+  .page { padding: 16px 14px; }
+
+  .flip {
+    width: 58px;
+    height: 80px;
+  }
+  .flip__digit {
+    font-size: 36px;
+    line-height: 80px;
+  }
+  .countdown__grid { gap: 6px; }
+  .flip-unit { gap: 8px; }
+
+  .hero__title { font-size: 52px; }
+  .pillar__title { font-size: 28px; }
 }
 
 /* ---------- Animations ---------- */

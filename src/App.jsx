@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react'
 
+const LAUNCH_DATE = new Date('2026-05-18T00:00:00Z')
+
 export default function App() {
   const [time, setTime] = useState(() => formatTime(new Date()))
   const [email, setEmail] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const countdown = useCountdown(LAUNCH_DATE)
 
   useEffect(() => {
     const id = setInterval(() => setTime(formatTime(new Date())), 1000)
@@ -52,6 +55,25 @@ export default function App() {
           Fast, clean, quietly powerful — we're building the charging<br className="br-lg" />
           experience drivers actually want.
         </p>
+
+        <div className="countdown" aria-live="polite">
+          {countdown.isOver ? (
+            <p className="countdown__live">— We're live. —</p>
+          ) : (
+            <>
+              <div className="countdown__label">
+                <span className="countdown__pulse" />
+                <span>T−MINUS · LAUNCH SEQUENCE</span>
+              </div>
+              <div className="countdown__grid">
+                <FlipDigit value={countdown.days}    label="Days" />
+                <FlipDigit value={countdown.hours}   label="Hours" />
+                <FlipDigit value={countdown.minutes} label="Minutes" />
+                <FlipDigit value={countdown.seconds} label="Seconds" />
+              </div>
+            </>
+          )}
+        </div>
 
         <form className="signup" onSubmit={handleSubmit}>
           <div className="signup__row">
@@ -156,6 +178,67 @@ export default function App() {
       </footer>
     </div>
   )
+}
+
+function FlipDigit({ value, label }) {
+  const [display, setDisplay] = useState(value)
+
+  useEffect(() => {
+    if (value === display) return
+    const id = setTimeout(() => setDisplay(value), 600)
+    return () => clearTimeout(id)
+  }, [value, display])
+
+  const flipping = value !== display
+  const oldV = pad(display)
+  const newV = pad(value)
+
+  return (
+    <div className="flip-unit">
+      <div className="flip">
+        <div className="flip__half flip__half--top">
+          <span className="flip__digit">{flipping ? newV : oldV}</span>
+        </div>
+        <div className="flip__half flip__half--bottom">
+          <span className="flip__digit">{oldV}</span>
+        </div>
+        {flipping && (
+          <>
+            <div key={`t-${oldV}-${newV}`} className="flip__flap flip__flap--top">
+              <span className="flip__digit">{oldV}</span>
+            </div>
+            <div key={`b-${oldV}-${newV}`} className="flip__flap flip__flap--bottom">
+              <span className="flip__digit">{newV}</span>
+            </div>
+          </>
+        )}
+      </div>
+      <span className="flip-unit__label">{label}</span>
+    </div>
+  )
+}
+
+function pad(n) {
+  return String(n).padStart(2, '0')
+}
+
+function useCountdown(target) {
+  const [diff, setDiff] = useState(() => Math.max(0, target.getTime() - Date.now()))
+
+  useEffect(() => {
+    const id = setInterval(() => {
+      setDiff(Math.max(0, target.getTime() - Date.now()))
+    }, 1000)
+    return () => clearInterval(id)
+  }, [target])
+
+  return {
+    days:    Math.floor(diff / 86_400_000),
+    hours:   Math.floor((diff % 86_400_000) / 3_600_000),
+    minutes: Math.floor((diff %  3_600_000) /     60_000),
+    seconds: Math.floor((diff %     60_000) /      1_000),
+    isOver:  diff <= 0,
+  }
 }
 
 function Pillar({ num, title, body }) {
